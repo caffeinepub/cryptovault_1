@@ -42,12 +42,8 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
       }, 0)
     : 0;
 
-  const formatUSD = (val: number) =>
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 2,
-    }).format(val);
+  const formatUSDT = (val: number) =>
+    `${val.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT`;
 
   const portfolioEntries = portfolio
     ? [
@@ -108,10 +104,10 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
             className="hidden sm:flex flex-col items-center"
           >
             <span className="text-muted-foreground text-xs uppercase tracking-widest font-mono-data">
-              Total Portfolio
+              Total Portfolio (USDT)
             </span>
             <span className="font-display font-bold text-2xl text-foreground">
-              {formatUSD(totalUSD)}
+              {formatUSDT(totalUSD)}
             </span>
           </motion.div>
         )}
@@ -146,10 +142,10 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
         {!isLoading && portfolio && (
           <div className="sm:hidden text-center">
             <p className="text-muted-foreground text-xs uppercase tracking-widest font-mono-data mb-1">
-              Total Portfolio
+              Total Portfolio (USDT)
             </p>
             <p className="font-display font-bold text-3xl text-foreground">
-              {formatUSD(totalUSD)}
+              {formatUSDT(totalUSD)}
             </p>
           </div>
         )}

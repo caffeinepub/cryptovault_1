@@ -20,12 +20,8 @@ function formatTimestamp(ts: bigint | number): string {
   }).format(new Date(ms));
 }
 
-function formatUSD(val: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 2,
-  }).format(val);
+function formatUSDT(val: number): string {
+  return `${val.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT`;
 }
 
 interface TransactionTableProps {
@@ -86,7 +82,7 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
         <span>Coin / Address</span>
         <span className="text-right hidden md:block">Date</span>
         <span className="text-right">Amount</span>
-        <span className="text-right">USD Value</span>
+        <span className="text-right">USDT Value</span>
       </div>
 
       <AnimatePresence>
@@ -182,10 +178,10 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                 </span>
               </div>
 
-              {/* USD */}
+              {/* USDT */}
               <div className="text-right">
                 <span className="font-mono-data text-sm text-foreground">
-                  {formatUSD(tx.usdValue)}
+                  {formatUSDT(tx.usdValue)}
                 </span>
               </div>
             </motion.div>

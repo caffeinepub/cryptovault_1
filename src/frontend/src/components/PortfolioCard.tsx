@@ -56,14 +56,10 @@ export function PortfolioCard({ coin, amount, index }: PortfolioCardProps) {
     icon: "◈",
     price: 0,
   };
-  const usdValue = amount * config.price;
+  const usdtValue = amount * config.price;
 
-  const formatUSD = (val: number) =>
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 2,
-    }).format(val);
+  const formatUSDT = (val: number) =>
+    `${val.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT`;
 
   const formatAmount = (val: number, c: string) => {
     if (c === "ADA")
@@ -151,12 +147,12 @@ export function PortfolioCard({ coin, amount, index }: PortfolioCardProps) {
           <span className="text-muted-foreground text-sm ml-1">{coin}</span>
         </div>
 
-        {/* USD value */}
+        {/* USDT value */}
         <div
           className="font-mono-data text-sm font-medium"
           style={{ color: config.color }}
         >
-          {formatUSD(usdValue)}
+          {formatUSDT(usdtValue)}
         </div>
       </div>
     </motion.div>
