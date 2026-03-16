@@ -1,0 +1,127 @@
+@font-face {
+  font-family: "Bricolage Grotesque";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("/assets/fonts/BricolageGrotesque.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Satoshi";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/assets/fonts/Satoshi.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/assets/fonts/JetBrainsMono.woff2") format("woff2");
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --background: 0.1 0.012 265;
+    --foreground: 0.94 0.006 260;
+    --card: 0.14 0.018 265;
+    --card-foreground: 0.94 0.006 260;
+    --popover: 0.14 0.018 265;
+    --popover-foreground: 0.94 0.006 260;
+    --primary: 0.72 0.18 195;
+    --primary-foreground: 0.1 0.012 265;
+    --secondary: 0.19 0.022 265;
+    --secondary-foreground: 0.78 0.01 260;
+    --muted: 0.17 0.018 265;
+    --muted-foreground: 0.55 0.015 260;
+    --accent: 0.82 0.16 80;
+    --accent-foreground: 0.1 0.012 265;
+    --destructive: 0.58 0.22 25;
+    --destructive-foreground: 0.98 0 0;
+    --border: 0.22 0.02 265;
+    --input: 0.19 0.022 265;
+    --ring: 0.72 0.18 195;
+    --radius: 0.75rem;
+    --success: 0.65 0.18 145;
+    --success-foreground: 0.98 0 145;
+    --chart-1: 0.72 0.18 195;
+    --chart-2: 0.65 0.18 145;
+    --chart-3: 0.82 0.16 80;
+    --chart-4: 0.58 0.22 25;
+    --chart-5: 0.7 0.16 290;
+    --sidebar: 0.12 0.016 265;
+    --sidebar-foreground: 0.94 0.006 260;
+    --sidebar-primary: 0.72 0.18 195;
+    --sidebar-primary-foreground: 0.1 0.012 265;
+    --sidebar-accent: 0.19 0.022 265;
+    --sidebar-accent-foreground: 0.78 0.01 260;
+    --sidebar-border: 0.22 0.02 265;
+    --sidebar-ring: 0.72 0.18 195;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Satoshi", sans-serif;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: "Bricolage Grotesque", sans-serif;
+  }
+  .font-mono-data {
+    font-family: "JetBrains Mono", monospace;
+  }
+  .text-success {
+    color: oklch(var(--success));
+  }
+  .bg-success\/10 {
+    background-color: oklch(var(--success) / 0.1);
+  }
+  .border-success\/30 {
+    border-color: oklch(var(--success) / 0.3);
+  }
+  .glow-cyan {
+    box-shadow: 0 0 20px oklch(var(--primary) / 0.25), 0 0 60px
+      oklch(var(--primary) / 0.1);
+  }
+  .glow-gold {
+    box-shadow: 0 0 20px oklch(var(--accent) / 0.25), 0 0 60px
+      oklch(var(--accent) / 0.08);
+  }
+  .card-gradient-border {
+    background: linear-gradient(oklch(var(--card)), oklch(var(--card)))
+      padding-box,
+      linear-gradient(
+        135deg,
+        oklch(var(--primary) / 0.4),
+        oklch(var(--border)),
+        oklch(var(--accent) / 0.2)
+      )
+      border-box;
+    border: 1px solid transparent;
+  }
+  .noise-overlay {
+    position: relative;
+  }
+  .noise-overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    border-radius: inherit;
+    pointer-events: none;
+  }
+}

@@ -1,0 +1,317 @@
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { LogOut, RefreshCw, Shield, TrendingUp } from "lucide-react";
+import { motion } from "motion/react";
+import { usePortfolio, useTransactionHistory } from "../hooks/useQueries";
+import { PortfolioCard } from "./PortfolioCard";
+import { TransactionTable } from "./TransactionTable";
+
+const PRICES: Record<string, number> = {
+  btc: 67000,
+  eth: 3500,
+  sol: 150,
+  ada: 0.45,
+  bnb: 580,
+};
+
+const PORTFOLIO_SKELETON_KEYS = ["btc", "eth", "sol", "ada", "bnb"];
+const TX_SKELETON_KEYS = ["tx-s-1", "tx-s-2", "tx-s-3", "tx-s-4"];
+
+interface DashboardProps {
+  onLogout: () => void;
+  username: string;
+}
+
+export function Dashboard({ onLogout, username }: DashboardProps) {
+  const {
+    data: portfolio,
+    isLoading: portfolioLoading,
+    refetch: refetchPortfolio,
+  } = usePortfolio();
+  const {
+    data: transactions,
+    isLoading: txLoading,
+    refetch: refetchTx,
+  } = useTransactionHistory();
+
+  const isLoading = portfolioLoading || txLoading;
+
+  const totalUSD = portfolio
+    ? Object.entries(portfolio).reduce((sum, [coin, amount]) => {
+        return sum + (amount as number) * (PRICES[coin] ?? 0);
+      }, 0)
+    : 0;
+
+  const formatUSD = (val: number) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 2,
+    }).format(val);
+
+  const portfolioEntries = portfolio
+    ? [
+        { coin: "BTC", amount: portfolio.btc },
+        { coin: "ETH", amount: portfolio.eth },
+        { coin: "SOL", amount: portfolio.sol },
+        { coin: "ADA", amount: portfolio.ada },
+        { coin: "BNB", amount: portfolio.bnb },
+      ]
+    : [];
+
+  const handleRefresh = () => {
+    refetchPortfolio();
+    refetchTx();
+  };
+
+  return (
+    <div
+      className="min-h-screen"
+      style={{
+        background:
+          "radial-gradient(ellipse 100% 40% at 50% -5%, oklch(0.25 0.1 195 / 0.2), transparent), oklch(0.1 0.012 265)",
+      }}
+    >
+      {/* Header */}
+      <header
+        className="sticky top-0 z-40 px-6 py-4 flex items-center justify-between"
+        style={{
+          background: "oklch(0.1 0.012 265 / 0.85)",
+          backdropFilter: "blur(20px)",
+          borderBottom: "1px solid oklch(0.22 0.02 265)",
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className="w-9 h-9 rounded-xl flex items-center justify-center"
+            style={{
+              background:
+                "linear-gradient(135deg, oklch(0.72 0.18 195 / 0.2), oklch(0.82 0.16 80 / 0.15))",
+              border: "1px solid oklch(0.72 0.18 195 / 0.35)",
+            }}
+          >
+            <Shield
+              className="w-5 h-5"
+              style={{ color: "oklch(0.72 0.18 195)" }}
+            />
+          </div>
+          <span className="font-display font-bold text-xl tracking-tight text-foreground">
+            CryptoVault
+          </span>
+        </div>
+
+        {/* Portfolio total */}
+        {!isLoading && portfolio && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="hidden sm:flex flex-col items-center"
+          >
+            <span className="text-muted-foreground text-xs uppercase tracking-widest font-mono-data">
+              Total Portfolio
+            </span>
+            <span className="font-display font-bold text-2xl text-foreground">
+              {formatUSD(totalUSD)}
+            </span>
+          </motion.div>
+        )}
+
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground text-sm hidden sm:block">
+            {username}
+          </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleRefresh}
+            className="w-9 h-9 text-muted-foreground hover:text-foreground"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onLogout}
+            data-ocid="header.logout_button"
+            className="gap-2 border-border/50 text-muted-foreground hover:text-foreground hover:border-border"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="hidden sm:inline">Logout</span>
+          </Button>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-10">
+        {/* Mobile total */}
+        {!isLoading && portfolio && (
+          <div className="sm:hidden text-center">
+            <p className="text-muted-foreground text-xs uppercase tracking-widest font-mono-data mb-1">
+              Total Portfolio
+            </p>
+            <p className="font-display font-bold text-3xl text-foreground">
+              {formatUSD(totalUSD)}
+            </p>
+          </div>
+        )}
+
+        {isLoading ? (
+          <div data-ocid="dashboard.loading_state" className="space-y-10">
+            {/* Portfolio skeletons */}
+            <section>
+              <Skeleton
+                className="h-6 w-36 mb-6 rounded-lg"
+                style={{ background: "oklch(0.18 0.02 265)" }}
+              />
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                {PORTFOLIO_SKELETON_KEYS.map((key) => (
+                  <div
+                    key={key}
+                    className="rounded-2xl p-5 space-y-3"
+                    style={{
+                      background: "oklch(0.14 0.018 265)",
+                      border: "1px solid oklch(0.22 0.02 265)",
+                    }}
+                  >
+                    <Skeleton
+                      className="h-11 w-11 rounded-xl"
+                      style={{ background: "oklch(0.18 0.02 265)" }}
+                    />
+                    <Skeleton
+                      className="h-4 w-16"
+                      style={{ background: "oklch(0.18 0.02 265)" }}
+                    />
+                    <Skeleton
+                      className="h-6 w-24"
+                      style={{ background: "oklch(0.18 0.02 265)" }}
+                    />
+                    <Skeleton
+                      className="h-4 w-20"
+                      style={{ background: "oklch(0.18 0.02 265)" }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
+            {/* Transaction skeletons */}
+            <section>
+              <Skeleton
+                className="h-6 w-44 mb-6 rounded-lg"
+                style={{ background: "oklch(0.18 0.02 265)" }}
+              />
+              <div
+                className="rounded-2xl overflow-hidden"
+                style={{
+                  background: "oklch(0.14 0.018 265)",
+                  border: "1px solid oklch(0.22 0.02 265)",
+                }}
+              >
+                {TX_SKELETON_KEYS.map((key, i) => (
+                  <div
+                    key={key}
+                    className="flex items-center gap-4 px-6 py-4"
+                    style={{
+                      borderBottom:
+                        i < TX_SKELETON_KEYS.length - 1
+                          ? "1px solid oklch(0.22 0.02 265 / 0.5)"
+                          : undefined,
+                    }}
+                  >
+                    <Skeleton
+                      className="h-8 w-8 rounded-lg shrink-0"
+                      style={{ background: "oklch(0.18 0.02 265)" }}
+                    />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton
+                        className="h-4 w-32"
+                        style={{ background: "oklch(0.18 0.02 265)" }}
+                      />
+                      <Skeleton
+                        className="h-3 w-24"
+                        style={{ background: "oklch(0.18 0.02 265)" }}
+                      />
+                    </div>
+                    <Skeleton
+                      className="h-4 w-20"
+                      style={{ background: "oklch(0.18 0.02 265)" }}
+                    />
+                    <Skeleton
+                      className="h-4 w-16"
+                      style={{ background: "oklch(0.18 0.02 265)" }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="space-y-10"
+          >
+            {/* Portfolio Section */}
+            <section>
+              <div className="flex items-center gap-3 mb-6">
+                <TrendingUp
+                  className="w-5 h-5"
+                  style={{ color: "oklch(0.72 0.18 195)" }}
+                />
+                <h2 className="font-display font-bold text-xl text-foreground">
+                  Portfolio
+                </h2>
+                <span className="text-muted-foreground text-sm font-mono-data">
+                  {portfolioEntries.length} assets
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                {portfolioEntries.map((entry, i) => (
+                  <PortfolioCard
+                    key={entry.coin}
+                    coin={entry.coin}
+                    amount={entry.amount}
+                    index={i}
+                  />
+                ))}
+              </div>
+            </section>
+
+            {/* Transactions Section */}
+            <section className="pb-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div
+                  className="w-5 h-5 rounded flex items-center justify-center text-xs"
+                  style={{ color: "oklch(0.72 0.18 195)" }}
+                >
+                  ⇄
+                </div>
+                <h2 className="font-display font-bold text-xl text-foreground">
+                  Transaction History
+                </h2>
+                {transactions && transactions.length > 0 && (
+                  <span className="text-muted-foreground text-sm font-mono-data">
+                    {transactions.length} transactions
+                  </span>
+                )}
+              </div>
+              <TransactionTable transactions={transactions ?? []} />
+            </section>
+          </motion.div>
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className="text-center py-6 text-muted-foreground/40 text-xs font-mono-data">
+        © {new Date().getFullYear()}.{" "}
+        <a
+          href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-muted-foreground transition-colors"
+        >
+          Built with ♥ using caffeine.ai
+        </a>
+      </footer>
+    </div>
+  );
+}
