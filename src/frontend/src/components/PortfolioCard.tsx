@@ -1,44 +1,59 @@
-import { TrendingUp } from "lucide-react";
 import { motion } from "motion/react";
 
 const COIN_CONFIG: Record<
   string,
-  { color: string; gradient: string; icon: string; price: number }
+  {
+    color: string;
+    gradient: string;
+    icon: string;
+    price: number;
+    name: string;
+    isStable?: boolean;
+  }
 > = {
   BTC: {
-    color: "oklch(0.82 0.16 80)",
+    color: "oklch(0.62 0.16 75)",
     gradient:
-      "linear-gradient(135deg, oklch(0.82 0.16 80 / 0.2), oklch(0.7 0.15 60 / 0.08))",
+      "linear-gradient(135deg, oklch(0.72 0.16 80 / 0.1), oklch(0.7 0.15 60 / 0.04))",
     icon: "₿",
-    price: 67000,
+    price: 85000,
+    name: "Bitcoin",
   },
-  ETH: {
-    color: "oklch(0.72 0.18 260)",
+  USDT: {
+    color: "oklch(0.48 0.17 145)",
     gradient:
-      "linear-gradient(135deg, oklch(0.72 0.18 260 / 0.2), oklch(0.65 0.15 280 / 0.08))",
-    icon: "Ξ",
-    price: 3500,
+      "linear-gradient(135deg, oklch(0.55 0.18 145 / 0.1), oklch(0.5 0.14 150 / 0.04))",
+    icon: "₮",
+    price: 1,
+    name: "Tether USD",
+    isStable: true,
   },
-  SOL: {
-    color: "oklch(0.68 0.22 290)",
+  USDC: {
+    color: "oklch(0.48 0.17 230)",
     gradient:
-      "linear-gradient(135deg, oklch(0.68 0.22 290 / 0.2), oklch(0.72 0.18 195 / 0.1))",
+      "linear-gradient(135deg, oklch(0.55 0.18 230 / 0.1), oklch(0.5 0.14 220 / 0.04))",
     icon: "◎",
-    price: 150,
+    price: 1,
+    name: "USD Coin",
+    isStable: true,
   },
-  ADA: {
-    color: "oklch(0.72 0.18 230)",
+  DAI: {
+    color: "oklch(0.62 0.16 75)",
     gradient:
-      "linear-gradient(135deg, oklch(0.72 0.18 230 / 0.2), oklch(0.65 0.15 220 / 0.08))",
-    icon: "₳",
-    price: 0.45,
+      "linear-gradient(135deg, oklch(0.72 0.16 80 / 0.1), oklch(0.65 0.13 85 / 0.04))",
+    icon: "◈",
+    price: 1,
+    name: "Dai Stablecoin",
+    isStable: true,
   },
-  BNB: {
-    color: "oklch(0.85 0.17 95)",
+  BUSD: {
+    color: "oklch(0.65 0.17 90)",
     gradient:
-      "linear-gradient(135deg, oklch(0.85 0.17 95 / 0.2), oklch(0.78 0.14 80 / 0.08))",
+      "linear-gradient(135deg, oklch(0.72 0.17 95 / 0.1), oklch(0.65 0.14 80 / 0.04))",
     icon: "⬡",
-    price: 580,
+    price: 1,
+    name: "Binance USD",
+    isStable: true,
   },
 };
 
@@ -46,24 +61,36 @@ interface PortfolioCardProps {
   coin: string;
   amount: number;
   index: number;
+  liveBtcPrice?: number;
 }
 
-export function PortfolioCard({ coin, amount, index }: PortfolioCardProps) {
+export function PortfolioCard({
+  coin,
+  amount,
+  index,
+  liveBtcPrice,
+}: PortfolioCardProps) {
   const config = COIN_CONFIG[coin] ?? {
-    color: "oklch(0.72 0.18 195)",
+    color: "oklch(0.48 0.18 195)",
     gradient:
-      "linear-gradient(135deg, oklch(0.72 0.18 195 / 0.2), transparent)",
+      "linear-gradient(135deg, oklch(0.55 0.18 195 / 0.1), transparent)",
     icon: "◈",
-    price: 0,
+    price: 1,
+    name: coin,
+    isStable: true,
   };
-  const usdtValue = amount * config.price;
+
+  const effectivePrice =
+    coin === "BTC" ? (liveBtcPrice ?? config.price) : config.price;
+  const usdtValue = amount * effectivePrice;
 
   const formatUSDT = (val: number) =>
     `${val.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT`;
 
-  const formatAmount = (val: number, c: string) => {
-    if (c === "ADA")
-      return val.toLocaleString("en-US", { maximumFractionDigits: 0 });
+  const formatAmount = (val: number) => {
+    if (config.isStable) {
+      return `$${val.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
     return val.toLocaleString("en-US", { maximumFractionDigits: 4 });
   };
 
@@ -80,9 +107,9 @@ export function PortfolioCard({ coin, amount, index }: PortfolioCardProps) {
       data-ocid={`portfolio.card.${index + 1}`}
       className="relative rounded-2xl p-5 overflow-hidden cursor-default"
       style={{
-        background: "oklch(0.14 0.018 265)",
-        border: `1px solid ${config.color.replace(")", " / 0.25)")}`,
-        boxShadow: `0 4px 24px oklch(0 0 0 / 0.3), 0 0 0 1px ${config.color.replace(")", " / 0.05)")} inset`,
+        background: "oklch(1 0 0)",
+        border: `1px solid ${config.color.replace(")", " / 0.2)")}`,
+        boxShadow: `0 4px 24px oklch(0.15 0.015 265 / 0.06), 0 0 0 1px ${config.color.replace(")", " / 0.05)")} inset`,
       }}
     >
       {/* Gradient wash */}
@@ -93,7 +120,7 @@ export function PortfolioCard({ coin, amount, index }: PortfolioCardProps) {
 
       {/* Subtle grid lines */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        className="absolute inset-0 pointer-events-none opacity-[0.02]"
         style={{
           backgroundImage: `linear-gradient(${config.color} 1px, transparent 1px), linear-gradient(90deg, ${config.color} 1px, transparent 1px)`,
           backgroundSize: "20px 20px",
@@ -106,23 +133,40 @@ export function PortfolioCard({ coin, amount, index }: PortfolioCardProps) {
           <div
             className="w-11 h-11 rounded-xl flex items-center justify-center text-xl font-bold"
             style={{
-              background: config.color.replace(")", " / 0.15)"),
+              background: config.color.replace(")", " / 0.12)"),
               color: config.color,
-              border: `1px solid ${config.color.replace(")", " / 0.3)")}`,
+              border: `1px solid ${config.color.replace(")", " / 0.25)")}`,
             }}
           >
             {config.icon}
           </div>
-          <div
-            className="flex items-center gap-1 text-xs px-2 py-1 rounded-full"
-            style={{
-              background: "oklch(0.65 0.18 145 / 0.12)",
-              color: "oklch(0.65 0.18 145)",
-            }}
-          >
-            <TrendingUp className="w-3 h-3" />
-            <span className="font-mono-data">Live</span>
-          </div>
+
+          {/* Live / Stable badge */}
+          {config.isStable ? (
+            <div
+              className="flex items-center gap-1 text-xs px-2 py-1 rounded-full"
+              style={{
+                background: "oklch(0.48 0.17 145 / 0.1)",
+                color: "oklch(0.42 0.17 145)",
+              }}
+            >
+              <span className="font-mono-data">Stable</span>
+            </div>
+          ) : (
+            <div
+              className="flex items-center gap-1.5 text-xs px-2 py-1 rounded-full"
+              style={{
+                background: "oklch(0.62 0.16 75 / 0.1)",
+                color: "oklch(0.55 0.16 75)",
+              }}
+            >
+              <span
+                className="w-1.5 h-1.5 rounded-full animate-pulse"
+                style={{ background: "oklch(0.62 0.16 75)" }}
+              />
+              <span className="font-mono-data">Live</span>
+            </div>
+          )}
         </div>
 
         {/* Coin info */}
@@ -131,20 +175,24 @@ export function PortfolioCard({ coin, amount, index }: PortfolioCardProps) {
             {coin}
           </div>
           <div className="text-muted-foreground text-xs font-mono-data mt-0.5">
-            {coin === "BTC" && "Bitcoin"}
-            {coin === "ETH" && "Ethereum"}
-            {coin === "SOL" && "Solana"}
-            {coin === "ADA" && "Cardano"}
-            {coin === "BNB" && "BNB Chain"}
+            {config.name}
           </div>
         </div>
 
         {/* Amount */}
         <div className="mb-1">
-          <span className="font-mono-data text-2xl font-semibold text-foreground">
-            {formatAmount(amount, coin)}
-          </span>
-          <span className="text-muted-foreground text-sm ml-1">{coin}</span>
+          {config.isStable ? (
+            <span className="font-mono-data text-2xl font-semibold text-foreground">
+              {formatAmount(amount)}
+            </span>
+          ) : (
+            <>
+              <span className="font-mono-data text-2xl font-semibold text-foreground">
+                {formatAmount(amount)}
+              </span>
+              <span className="text-muted-foreground text-sm ml-1">{coin}</span>
+            </>
+          )}
         </div>
 
         {/* USDT value */}
@@ -152,7 +200,22 @@ export function PortfolioCard({ coin, amount, index }: PortfolioCardProps) {
           className="font-mono-data text-sm font-medium"
           style={{ color: config.color }}
         >
-          {formatUSDT(usdtValue)}
+          {coin === "BTC" && liveBtcPrice ? (
+            <span>
+              {formatUSDT(usdtValue)}
+              <span
+                className="ml-1 text-xs opacity-60"
+                style={{ color: "oklch(0.55 0.16 75)" }}
+              >
+                @ $
+                {liveBtcPrice.toLocaleString("en-US", {
+                  maximumFractionDigits: 0,
+                })}
+              </span>
+            </span>
+          ) : (
+            formatUSDT(usdtValue)
+          )}
         </div>
       </div>
     </motion.div>

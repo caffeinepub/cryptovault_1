@@ -2,19 +2,22 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LogOut, RefreshCw, Shield, TrendingUp } from "lucide-react";
 import { motion } from "motion/react";
-import { usePortfolio, useTransactionHistory } from "../hooks/useQueries";
+import {
+  useLiveBtcPrice,
+  usePortfolio,
+  useTransactionHistory,
+} from "../hooks/useQueries";
 import { PortfolioCard } from "./PortfolioCard";
 import { TransactionTable } from "./TransactionTable";
 
-const PRICES: Record<string, number> = {
-  btc: 67000,
-  eth: 3500,
-  sol: 150,
-  ada: 0.45,
-  bnb: 580,
+// Only BTC, USDT, USDC
+const COIN_MAP: Record<string, string> = {
+  btc: "BTC",
+  eth: "USDT",
+  sol: "USDC",
 };
 
-const PORTFOLIO_SKELETON_KEYS = ["btc", "eth", "sol", "ada", "bnb"];
+const PORTFOLIO_SKELETON_KEYS = ["btc", "usdt", "usdc"];
 const TX_SKELETON_KEYS = ["tx-s-1", "tx-s-2", "tx-s-3", "tx-s-4"];
 
 interface DashboardProps {
@@ -33,26 +36,25 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
     isLoading: txLoading,
     refetch: refetchTx,
   } = useTransactionHistory();
+  const { data: liveBtcPrice, isLoading: btcPriceLoading } = useLiveBtcPrice();
 
   const isLoading = portfolioLoading || txLoading;
 
+  const btcPrice = liveBtcPrice ?? 85000;
+
+  // Only count btc, usdt (eth field), usdc (sol field)
   const totalUSD = portfolio
-    ? Object.entries(portfolio).reduce((sum, [coin, amount]) => {
-        return sum + (amount as number) * (PRICES[coin] ?? 0);
-      }, 0)
+    ? portfolio.btc * btcPrice + portfolio.eth * 1 + portfolio.sol * 1
     : 0;
 
   const formatUSDT = (val: number) =>
     `${val.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT`;
 
   const portfolioEntries = portfolio
-    ? [
-        { coin: "BTC", amount: portfolio.btc },
-        { coin: "ETH", amount: portfolio.eth },
-        { coin: "SOL", amount: portfolio.sol },
-        { coin: "ADA", amount: portfolio.ada },
-        { coin: "BNB", amount: portfolio.bnb },
-      ]
+    ? Object.entries(COIN_MAP).map(([field, coin]) => ({
+        coin,
+        amount: portfolio[field as keyof typeof portfolio] as number,
+      }))
     : [];
 
   const handleRefresh = () => {
@@ -60,21 +62,23 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
     refetchTx();
   };
 
+  const isDemo = username === "demo";
+
   return (
     <div
       className="min-h-screen"
       style={{
         background:
-          "radial-gradient(ellipse 100% 40% at 50% -5%, oklch(0.25 0.1 195 / 0.2), transparent), oklch(0.1 0.012 265)",
+          "radial-gradient(ellipse 100% 40% at 50% -5%, oklch(0.55 0.18 195 / 0.08), transparent), oklch(0.98 0.004 265)",
       }}
     >
       {/* Header */}
       <header
         className="sticky top-0 z-40 px-6 py-4 flex items-center justify-between"
         style={{
-          background: "oklch(0.1 0.012 265 / 0.85)",
+          background: "oklch(1 0 0 / 0.9)",
           backdropFilter: "blur(20px)",
-          borderBottom: "1px solid oklch(0.22 0.02 265)",
+          borderBottom: "1px solid oklch(0.88 0.01 265)",
         }}
       >
         <div className="flex items-center gap-3">
@@ -82,13 +86,13 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
             className="w-9 h-9 rounded-xl flex items-center justify-center"
             style={{
               background:
-                "linear-gradient(135deg, oklch(0.72 0.18 195 / 0.2), oklch(0.82 0.16 80 / 0.15))",
-              border: "1px solid oklch(0.72 0.18 195 / 0.35)",
+                "linear-gradient(135deg, oklch(0.55 0.18 195 / 0.15), oklch(0.72 0.16 80 / 0.1))",
+              border: "1px solid oklch(0.55 0.18 195 / 0.3)",
             }}
           >
             <Shield
               className="w-5 h-5"
-              style={{ color: "oklch(0.72 0.18 195)" }}
+              style={{ color: "oklch(0.55 0.18 195)" }}
             />
           </div>
           <span className="font-display font-bold text-xl tracking-tight text-foreground">
@@ -106,9 +110,32 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
             <span className="text-muted-foreground text-xs uppercase tracking-widest font-mono-data">
               Total Portfolio (USDT)
             </span>
-            <span className="font-display font-bold text-2xl text-foreground">
-              {formatUSDT(totalUSD)}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="font-display font-bold text-2xl text-foreground">
+                {formatUSDT(totalUSD)}
+              </span>
+              {btcPriceLoading && (
+                <span
+                  className="text-xs px-1.5 py-0.5 rounded font-mono-data"
+                  style={{
+                    background: "oklch(0.72 0.16 80 / 0.1)",
+                    color: "oklch(0.55 0.16 80 / 0.7)",
+                  }}
+                >
+                  Loading BTC…
+                </span>
+              )}
+            </div>
+            {!isDemo && (
+              <span
+                className="text-xs font-mono-data mt-0.5"
+                style={{ color: "oklch(0.55 0.18 195 / 0.75)" }}
+                data-ocid="header.account_holder.card"
+              >
+                Account Holder:{" "}
+                <span className="font-semibold">Chanxin Lanier</span>
+              </span>
+            )}
           </motion.div>
         )}
 
@@ -147,6 +174,16 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
             <p className="font-display font-bold text-3xl text-foreground">
               {formatUSDT(totalUSD)}
             </p>
+            {!isDemo && (
+              <p
+                className="text-xs font-mono-data mt-1"
+                style={{ color: "oklch(0.55 0.18 195 / 0.75)" }}
+                data-ocid="mobile.account_holder.card"
+              >
+                Account Holder:{" "}
+                <span className="font-semibold">Chanxin Lanier</span>
+              </p>
+            )}
           </div>
         )}
 
@@ -156,33 +193,33 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
             <section>
               <Skeleton
                 className="h-6 w-36 mb-6 rounded-lg"
-                style={{ background: "oklch(0.18 0.02 265)" }}
+                style={{ background: "oklch(0.91 0.008 265)" }}
               />
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {PORTFOLIO_SKELETON_KEYS.map((key) => (
                   <div
                     key={key}
                     className="rounded-2xl p-5 space-y-3"
                     style={{
-                      background: "oklch(0.14 0.018 265)",
-                      border: "1px solid oklch(0.22 0.02 265)",
+                      background: "oklch(1 0 0)",
+                      border: "1px solid oklch(0.88 0.01 265)",
                     }}
                   >
                     <Skeleton
                       className="h-11 w-11 rounded-xl"
-                      style={{ background: "oklch(0.18 0.02 265)" }}
+                      style={{ background: "oklch(0.91 0.008 265)" }}
                     />
                     <Skeleton
                       className="h-4 w-16"
-                      style={{ background: "oklch(0.18 0.02 265)" }}
+                      style={{ background: "oklch(0.91 0.008 265)" }}
                     />
                     <Skeleton
                       className="h-6 w-24"
-                      style={{ background: "oklch(0.18 0.02 265)" }}
+                      style={{ background: "oklch(0.91 0.008 265)" }}
                     />
                     <Skeleton
                       className="h-4 w-20"
-                      style={{ background: "oklch(0.18 0.02 265)" }}
+                      style={{ background: "oklch(0.91 0.008 265)" }}
                     />
                   </div>
                 ))}
@@ -192,13 +229,13 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
             <section>
               <Skeleton
                 className="h-6 w-44 mb-6 rounded-lg"
-                style={{ background: "oklch(0.18 0.02 265)" }}
+                style={{ background: "oklch(0.91 0.008 265)" }}
               />
               <div
                 className="rounded-2xl overflow-hidden"
                 style={{
-                  background: "oklch(0.14 0.018 265)",
-                  border: "1px solid oklch(0.22 0.02 265)",
+                  background: "oklch(1 0 0)",
+                  border: "1px solid oklch(0.88 0.01 265)",
                 }}
               >
                 {TX_SKELETON_KEYS.map((key, i) => (
@@ -208,31 +245,31 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
                     style={{
                       borderBottom:
                         i < TX_SKELETON_KEYS.length - 1
-                          ? "1px solid oklch(0.22 0.02 265 / 0.5)"
+                          ? "1px solid oklch(0.88 0.01 265 / 0.5)"
                           : undefined,
                     }}
                   >
                     <Skeleton
                       className="h-8 w-8 rounded-lg shrink-0"
-                      style={{ background: "oklch(0.18 0.02 265)" }}
+                      style={{ background: "oklch(0.91 0.008 265)" }}
                     />
                     <div className="flex-1 space-y-2">
                       <Skeleton
                         className="h-4 w-32"
-                        style={{ background: "oklch(0.18 0.02 265)" }}
+                        style={{ background: "oklch(0.91 0.008 265)" }}
                       />
                       <Skeleton
                         className="h-3 w-24"
-                        style={{ background: "oklch(0.18 0.02 265)" }}
+                        style={{ background: "oklch(0.91 0.008 265)" }}
                       />
                     </div>
                     <Skeleton
                       className="h-4 w-20"
-                      style={{ background: "oklch(0.18 0.02 265)" }}
+                      style={{ background: "oklch(0.91 0.008 265)" }}
                     />
                     <Skeleton
                       className="h-4 w-16"
-                      style={{ background: "oklch(0.18 0.02 265)" }}
+                      style={{ background: "oklch(0.91 0.008 265)" }}
                     />
                   </div>
                 ))}
@@ -251,7 +288,7 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
               <div className="flex items-center gap-3 mb-6">
                 <TrendingUp
                   className="w-5 h-5"
-                  style={{ color: "oklch(0.72 0.18 195)" }}
+                  style={{ color: "oklch(0.55 0.18 195)" }}
                 />
                 <h2 className="font-display font-bold text-xl text-foreground">
                   Portfolio
@@ -260,13 +297,16 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
                   {portfolioEntries.length} assets
                 </span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {portfolioEntries.map((entry, i) => (
                   <PortfolioCard
                     key={entry.coin}
                     coin={entry.coin}
                     amount={entry.amount}
                     index={i}
+                    liveBtcPrice={
+                      entry.coin === "BTC" ? liveBtcPrice : undefined
+                    }
                   />
                 ))}
               </div>
@@ -277,7 +317,7 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
               <div className="flex items-center gap-3 mb-6">
                 <div
                   className="w-5 h-5 rounded flex items-center justify-center text-xs"
-                  style={{ color: "oklch(0.72 0.18 195)" }}
+                  style={{ color: "oklch(0.55 0.18 195)" }}
                 >
                   ⇄
                 </div>

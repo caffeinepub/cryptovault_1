@@ -34,27 +34,27 @@ export function LoginPage({ onLogin, isLoading }: LoginPageProps) {
       className="min-h-screen flex items-center justify-center relative overflow-hidden"
       style={{
         background:
-          "radial-gradient(ellipse 80% 60% at 50% -10%, oklch(0.25 0.12 195 / 0.35), transparent), oklch(0.1 0.012 265)",
+          "radial-gradient(ellipse 80% 60% at 50% -10%, oklch(0.55 0.18 195 / 0.12), transparent), oklch(0.98 0.004 265)",
       }}
     >
       {/* Background grid */}
       <div
-        className="absolute inset-0 opacity-[0.04]"
+        className="absolute inset-0 opacity-[0.03]"
         style={{
           backgroundImage:
-            "linear-gradient(oklch(0.72 0.18 195) 1px, transparent 1px), linear-gradient(90deg, oklch(0.72 0.18 195) 1px, transparent 1px)",
+            "linear-gradient(oklch(0.55 0.18 195) 1px, transparent 1px), linear-gradient(90deg, oklch(0.55 0.18 195) 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }}
       />
 
       {/* Floating orbs */}
       <div
-        className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-10 blur-3xl"
-        style={{ background: "oklch(0.72 0.18 195)" }}
+        className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-[0.06] blur-3xl"
+        style={{ background: "oklch(0.55 0.18 195)" }}
       />
       <div
-        className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full opacity-8 blur-3xl"
-        style={{ background: "oklch(0.82 0.16 80)" }}
+        className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full opacity-[0.05] blur-3xl"
+        style={{ background: "oklch(0.72 0.16 80)" }}
       />
 
       <motion.div
@@ -74,14 +74,14 @@ export function LoginPage({ onLogin, isLoading }: LoginPageProps) {
             className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
             style={{
               background:
-                "linear-gradient(135deg, oklch(0.72 0.18 195 / 0.2), oklch(0.82 0.16 80 / 0.15))",
-              border: "1px solid oklch(0.72 0.18 195 / 0.4)",
-              boxShadow: "0 0 30px oklch(0.72 0.18 195 / 0.3)",
+                "linear-gradient(135deg, oklch(0.55 0.18 195 / 0.15), oklch(0.72 0.16 80 / 0.1))",
+              border: "1px solid oklch(0.55 0.18 195 / 0.35)",
+              boxShadow: "0 0 30px oklch(0.55 0.18 195 / 0.2)",
             }}
           >
             <Shield
               className="w-8 h-8"
-              style={{ color: "oklch(0.72 0.18 195)" }}
+              style={{ color: "oklch(0.55 0.18 195)" }}
             />
           </div>
           <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
@@ -99,10 +99,10 @@ export function LoginPage({ onLogin, isLoading }: LoginPageProps) {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="rounded-2xl p-8"
           style={{
-            background: "oklch(0.14 0.018 265)",
-            border: "1px solid oklch(0.22 0.02 265)",
+            background: "oklch(1 0 0)",
+            border: "1px solid oklch(0.88 0.01 265)",
             boxShadow:
-              "0 24px 80px oklch(0 0 0 / 0.5), 0 0 0 1px oklch(0.72 0.18 195 / 0.08) inset",
+              "0 24px 80px oklch(0.15 0.015 265 / 0.08), 0 0 0 1px oklch(0.55 0.18 195 / 0.06) inset",
           }}
         >
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -164,9 +164,9 @@ export function LoginPage({ onLogin, isLoading }: LoginPageProps) {
                 data-ocid="login.error_state"
                 className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm"
                 style={{
-                  background: "oklch(0.58 0.22 25 / 0.12)",
-                  border: "1px solid oklch(0.58 0.22 25 / 0.3)",
-                  color: "oklch(0.75 0.18 25)",
+                  background: "oklch(0.55 0.22 25 / 0.08)",
+                  border: "1px solid oklch(0.55 0.22 25 / 0.25)",
+                  color: "oklch(0.48 0.2 25)",
                 }}
               >
                 <Lock className="w-4 h-4 shrink-0" />
@@ -181,12 +181,12 @@ export function LoginPage({ onLogin, isLoading }: LoginPageProps) {
               className="w-full h-12 font-display font-semibold text-base tracking-wide"
               style={{
                 background: isLoading
-                  ? "oklch(0.72 0.18 195 / 0.5)"
-                  : "linear-gradient(135deg, oklch(0.72 0.18 195), oklch(0.65 0.2 210))",
-                color: "oklch(0.1 0.012 265)",
+                  ? "oklch(0.55 0.18 195 / 0.5)"
+                  : "linear-gradient(135deg, oklch(0.55 0.18 195), oklch(0.48 0.2 210))",
+                color: "oklch(0.98 0.004 265)",
                 boxShadow: isLoading
                   ? "none"
-                  : "0 0 24px oklch(0.72 0.18 195 / 0.4)",
+                  : "0 0 24px oklch(0.55 0.18 195 / 0.3)",
               }}
             >
               {isLoading ? (

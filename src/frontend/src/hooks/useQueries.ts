@@ -17,3 +17,23 @@ export function useTransactionHistory() {
     staleTime: Number.POSITIVE_INFINITY,
   });
 }
+
+export function useLiveBtcPrice() {
+  return useQuery<number>({
+    queryKey: ["btc-price-live"],
+    queryFn: async () => {
+      try {
+        const res = await fetch(
+          "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT",
+        );
+        if (!res.ok) throw new Error("Failed to fetch BTC price");
+        const data: { price: string } = await res.json();
+        return Number.parseFloat(data.price);
+      } catch {
+        return 85000;
+      }
+    },
+    refetchInterval: 1000,
+    staleTime: 0,
+  });
+}

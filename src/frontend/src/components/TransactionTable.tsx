@@ -37,20 +37,20 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
         data-ocid="transactions.empty_state"
         className="flex flex-col items-center justify-center py-16 px-8 rounded-2xl"
         style={{
-          background: "oklch(0.14 0.018 265)",
-          border: "1px dashed oklch(0.22 0.02 265)",
+          background: "oklch(1 0 0)",
+          border: "1px dashed oklch(0.88 0.01 265)",
         }}
       >
         <div
           className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
           style={{
-            background: "oklch(0.72 0.18 195 / 0.1)",
-            border: "1px solid oklch(0.72 0.18 195 / 0.2)",
+            background: "oklch(0.55 0.18 195 / 0.08)",
+            border: "1px solid oklch(0.55 0.18 195 / 0.18)",
           }}
         >
           <ReceiptText
             className="w-7 h-7"
-            style={{ color: "oklch(0.72 0.18 195)" }}
+            style={{ color: "oklch(0.55 0.18 195)" }}
           />
         </div>
         <p className="font-display font-semibold text-foreground text-lg">
@@ -69,14 +69,14 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
       data-ocid="transactions.table"
       className="rounded-2xl overflow-hidden"
       style={{
-        background: "oklch(0.14 0.018 265)",
-        border: "1px solid oklch(0.22 0.02 265)",
+        background: "oklch(1 0 0)",
+        border: "1px solid oklch(0.88 0.01 265)",
       }}
     >
       {/* Table header */}
       <div
         className="grid grid-cols-[auto_1fr_auto_auto_auto] gap-4 px-6 py-3 text-xs font-mono-data uppercase tracking-widest text-muted-foreground"
-        style={{ borderBottom: "1px solid oklch(0.22 0.02 265)" }}
+        style={{ borderBottom: "1px solid oklch(0.88 0.01 265)" }}
       >
         <span>Type</span>
         <span>Coin / Address</span>
@@ -95,11 +95,11 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.35, delay: i * 0.05 }}
               data-ocid={i < 5 ? `transactions.item.${i + 1}` : undefined}
-              className="grid grid-cols-[auto_1fr_auto_auto_auto] gap-4 px-6 py-4 items-center hover:bg-white/[0.02] transition-colors"
+              className="grid grid-cols-[auto_1fr_auto_auto_auto] gap-4 px-6 py-4 items-center hover:bg-black/[0.02] transition-colors"
               style={{
                 borderBottom:
                   i < transactions.length - 1
-                    ? "1px solid oklch(0.22 0.02 265 / 0.5)"
+                    ? "1px solid oklch(0.88 0.01 265 / 0.6)"
                     : undefined,
               }}
             >
@@ -108,24 +108,24 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                 className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
                 style={{
                   background: isReceive
-                    ? "oklch(0.65 0.18 145 / 0.12)"
-                    : "oklch(0.58 0.22 25 / 0.12)",
+                    ? "oklch(0.48 0.17 145 / 0.1)"
+                    : "oklch(0.55 0.22 25 / 0.1)",
                   border: `1px solid ${
                     isReceive
-                      ? "oklch(0.65 0.18 145 / 0.3)"
-                      : "oklch(0.58 0.22 25 / 0.3)"
+                      ? "oklch(0.48 0.17 145 / 0.25)"
+                      : "oklch(0.55 0.22 25 / 0.25)"
                   }`,
                 }}
               >
                 {isReceive ? (
                   <ArrowDownLeft
                     className="w-4 h-4"
-                    style={{ color: "oklch(0.65 0.18 145)" }}
+                    style={{ color: "oklch(0.48 0.17 145)" }}
                   />
                 ) : (
                   <ArrowUpRight
                     className="w-4 h-4"
-                    style={{ color: "oklch(0.65 0.18 28)" }}
+                    style={{ color: "oklch(0.52 0.22 28)" }}
                   />
                 )}
               </div>
@@ -141,11 +141,11 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                     className="text-xs font-mono-data px-2 py-0 h-5 border-none"
                     style={{
                       background: isReceive
-                        ? "oklch(0.65 0.18 145 / 0.12)"
-                        : "oklch(0.58 0.22 25 / 0.12)",
+                        ? "oklch(0.48 0.17 145 / 0.1)"
+                        : "oklch(0.55 0.22 25 / 0.1)",
                       color: isReceive
-                        ? "oklch(0.72 0.18 145)"
-                        : "oklch(0.72 0.18 25)",
+                        ? "oklch(0.42 0.17 145)"
+                        : "oklch(0.48 0.2 25)",
                     }}
                   >
                     {isReceive ? "Receive" : "Send"}
@@ -167,8 +167,8 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                   className="font-mono-data text-sm font-medium"
                   style={{
                     color: isReceive
-                      ? "oklch(0.72 0.18 145)"
-                      : "oklch(0.72 0.18 25)",
+                      ? "oklch(0.42 0.17 145)"
+                      : "oklch(0.48 0.2 25)",
                   }}
                 >
                   {isReceive ? "+" : "-"}
