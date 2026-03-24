@@ -22,18 +22,30 @@ export function useLiveBtcPrice() {
   return useQuery<number>({
     queryKey: ["btc-price-live"],
     queryFn: async () => {
+      // Try CoinGecko first
       try {
         const res = await fetch(
-          "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT",
+          "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd",
         );
-        if (!res.ok) throw new Error("Failed to fetch BTC price");
-        const data: { price: string } = await res.json();
-        return Number.parseFloat(data.price);
+        if (!res.ok) throw new Error("CoinGecko failed");
+        const data: { bitcoin: { usd: number } } = await res.json();
+        if (data?.bitcoin?.usd) return data.bitcoin.usd;
+        throw new Error("Invalid response");
       } catch {
-        return 85000;
+        // Fallback: try CoinCap
+        try {
+          const res2 = await fetch("https://api.coincap.io/v2/assets/bitcoin");
+          if (!res2.ok) throw new Error("CoinCap failed");
+          const data2: { data: { priceUsd: string } } = await res2.json();
+          if (data2?.data?.priceUsd)
+            return Number.parseFloat(data2.data.priceUsd);
+          throw new Error("Invalid response");
+        } catch {
+          return 85000;
+        }
       }
     },
-    refetchInterval: 1000,
+    refetchInterval: 30000,
     staleTime: 0,
   });
 }
