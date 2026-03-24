@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { LogOut, RefreshCw, Shield, TrendingUp } from "lucide-react";
+import { LogOut, RefreshCw, Send, Shield, TrendingUp } from "lucide-react";
 import { motion } from "motion/react";
 import {
   useLiveBtcPrice,
@@ -133,7 +133,9 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
                 data-ocid="header.account_holder.card"
               >
                 Account Holder:{" "}
-                <span className="font-semibold">Chanxin Lanier</span>
+                <span className="font-semibold">
+                  Chanxin Lanier & Walter Moses Irizarry
+                </span>
               </span>
             )}
           </motion.div>
@@ -181,7 +183,9 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
                 data-ocid="mobile.account_holder.card"
               >
                 Account Holder:{" "}
-                <span className="font-semibold">Chanxin Lanier</span>
+                <span className="font-semibold">
+                  Chanxin Lanier & Walter Moses Irizarry
+                </span>
               </p>
             )}
           </div>
@@ -296,6 +300,21 @@ export function Dashboard({ onLogout, username }: DashboardProps) {
                 <span className="text-muted-foreground text-sm font-mono-data">
                   {portfolioEntries.length} assets
                 </span>
+                <div className="flex-1" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  data-ocid="portfolio.transfer_trustwallet_button"
+                  className="gap-2 text-sm font-semibold transition-all"
+                  style={{
+                    borderColor: "oklch(0.55 0.18 195 / 0.5)",
+                    color: "oklch(0.55 0.18 195)",
+                    background: "oklch(0.55 0.18 195 / 0.06)",
+                  }}
+                >
+                  <Send className="w-4 h-4" />
+                  to TrustWallet
+                </Button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {portfolioEntries.map((entry, i) => (

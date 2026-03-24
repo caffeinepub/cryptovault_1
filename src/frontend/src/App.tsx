@@ -15,6 +15,7 @@ const queryClient = new QueryClient({
 
 const VALID_CREDENTIALS: Record<string, string> = {
   dullard69: "Weknowwhattodo",
+  chanxinsymlanier: "Forgoodwills",
   demo: "demo",
 };
 
